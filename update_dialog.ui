@@ -62,9 +62,6 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="pixmap">
-         <pixmap>../../../../usr/share/icons/Humanity/apps/48/gksu-root-terminal.svg</pixmap>
-        </property>
        </widget>
       </item>
       <item row="1" column="2" rowspan="2">

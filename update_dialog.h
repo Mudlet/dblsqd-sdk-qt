@@ -37,7 +37,6 @@ private:
     Ui::UpdateDialog* ui;
     Feed* feed;
     Type type;
-    QPixmap icon;
 
     QSettings* settings;
     QString settingsGroup;

@@ -67,8 +67,10 @@ UpdateDialog::UpdateDialog(Feed* feed, Type type, QWidget* parent, QSettings* se
     isDownloadFinished(false)
 {
     ui->setupUi(this);
-    ui->progressBar->setHidden(true);
     toggleNoUpdates(true);
+
+    ui->progressBar->setHidden(true);
+    ui->labelIcon->setHidden(true);
 
     QString headline = ui->labelHeadlineNoUpdates->text();
     replaceAppVars(headline);
@@ -118,12 +120,12 @@ UpdateDialog::~UpdateDialog()
  * \brief Sets the icon displayed in the update window.
  */
 void UpdateDialog::setIcon(QPixmap pixmap) {
-    this->icon = pixmap;
+    ui->labelIcon->setPixmap(QPixmap(pixmap));
     ui->labelIcon->setHidden(false);
 }
 
 void UpdateDialog::setIcon(QString fileName) {
-    this->icon = QPixmap(fileName);
+    ui->labelIcon->setPixmap(QPixmap(fileName));
     ui->labelIcon->setHidden(false);
 }
 
