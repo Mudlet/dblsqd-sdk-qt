@@ -42,7 +42,7 @@ Release::Release(QString version, QDateTime date)
  * Release order. If versions are identical or not compatible with SemVer,
  * Release date is used for determining order instead.
  */
-bool Release::operator <(const Release &other) {
+bool Release::operator <(const Release &other) const {
     SemVer v1(this->version);
     SemVer v2(other.version);
     if (v1.isValid() && v2.isValid()) {
