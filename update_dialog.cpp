@@ -344,8 +344,11 @@ void UpdateDialog::handleDownloadFinished() {
 }
 
 void UpdateDialog::handleDownloadError(QString message) {
-    QErrorMessage* errorMessage = new QErrorMessage(this);
-    errorMessage->showMessage(message);
+    QMessageBox* messageBox = new QMessageBox(this);
+    messageBox->setIcon(QMessageBox::Warning);
+    messageBox->setText("There was an error while downloading the update.");
+    messageBox->setInformativeText(message);
+    messageBox->show();
     done(QDialog::Rejected);
 }
 
