@@ -59,8 +59,10 @@ void Feed::setUrl(QString baseUrl, QString channel, QString os, QString arch, QS
         QString autoOs = QSysInfo::productType().toLower();
         if (autoOs == "windows") {
             autoOs = "win";
-        } else if (autoOs== "osx") {
+        } else if (autoOs == "osx" || autoOs == "macos") {
             autoOs = "mac";
+        } else {
+            autoOs = QSysInfo::kernelType();
         }
         urlParts << autoOs;
     }
