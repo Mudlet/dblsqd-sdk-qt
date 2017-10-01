@@ -243,6 +243,7 @@ void UpdateDialog::startDownload() {
 
 void UpdateDialog::startUpdate() {
     if (QDesktopServices::openUrl(QUrl::fromLocalFile(updateFilePath))) {
+        done(QDialog::Accepted);
         QApplication::quit();
     } else {
         handleDownloadError(tr("Could not open downloaded file %1").arg(updateFilePath));
