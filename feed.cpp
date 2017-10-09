@@ -151,9 +151,9 @@ void Feed::load() {
  * \sa downloadFinished() downloadError() downloadProgress()
  */
 void Feed::downloadRelease(Release release) {
-    release = release;
     redirects = 0;
     makeDownloadRequest(release.getDownloadUrl());
+    this->release = release;
 }
 
 /*
@@ -169,7 +169,6 @@ void Feed::makeDownloadRequest(QUrl url) {
         disconnect(downloadFile);
         downloadFile->close();
         downloadFile->deleteLater();
-        downloadFile = NULL;
     }
 
     QNetworkRequest request(url);
