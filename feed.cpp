@@ -6,7 +6,7 @@ namespace dblsqd {
   \class Feed
  * \brief The Feed class provides methods for accessing DBLSQD Feeds and downloading Releases.
  *
- * A Feed is a representation of an Applicationâ€™s Releases.
+ * A Feed is a representation of an Application’s Releases.
  * This class can retrieve Feeds via HTTP(S) and offers convenience methods for
  *
  * \section3 Loading Feeds
@@ -201,7 +201,7 @@ void Feed::makeDownloadRequest(QUrl url) {
 
 /*! \fn void Feed::downloadFinished()
  * This signal is emitted when the download of a Release was successful.
- * A QTemporaryFile* of the downlaoded file can then be retrieved with getDownloadFile().
+ * A QTemporaryFile* of the downloaded file can then be retrieved with getDownloadFile().
  * \sa downloadRelease()
  */
 
