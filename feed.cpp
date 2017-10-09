@@ -169,6 +169,7 @@ void Feed::makeDownloadRequest(QUrl url) {
         disconnect(downloadFile);
         downloadFile->close();
         downloadFile->deleteLater();
+        downloadFile = NULL;
     }
 
     QNetworkRequest request(url);
