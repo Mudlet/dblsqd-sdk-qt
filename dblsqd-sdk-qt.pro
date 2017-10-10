@@ -12,23 +12,23 @@ TARGET = dblsqd-sdk-qt
 TEMPLATE = lib
 
 SOURCES += \
-    release.cpp \
-    semver.cpp \
-    update_dialog.cpp \
-    feed.cpp
+    $$PWD/release.cpp \
+    $$PWD/semver.cpp \
+    $$PWD/update_dialog.cpp \
+    $$PWD/feed.cpp
 
 HEADERS  += \
-    release.h \
-    semver.h \
-    update_dialog.h \
-    feed.h
+    $$PWD/release.h \
+    $$PWD/semver.h \
+    $$PWD/update_dialog.h \
+    $$PWD/feed.h
 
 FORMS    += \
-    update_dialog.ui
+    $$PWD/update_dialog.ui
 
 VERSION = 0.1.0
 
 DISTFILES += \
-    README.md \
-    LICENSE \
-    Doxyfile
+    $$PWD/README.md \
+    $$PWD/LICENSE \
+    $$PWD/Doxyfile

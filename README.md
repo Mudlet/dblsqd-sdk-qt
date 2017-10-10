@@ -11,19 +11,7 @@ and put them in your project folder. Then add the following section to your
 
 ```makefile
 #DBLSQD
-SOURCES +=  \
-    dblsqd-sdk-qt/feed.cpp \
-    dblsqd-sdk-qt/release.cpp \
-    dblsqd-sdk-qt/semver.cpp \
-    dblsqd-sdk-qt/update_dialog.cpp
-HEADERS += \
-    dblsqd-sdk-qt/feed.h \
-    dblsqd-sdk-qt/release.h \
-    dblsqd-sdk-qt/semver.h \
-    dblsqd-sdk-qt/update_dialog.h
-FORMS += dblsqd-sdk-qt/update_dialog.ui
-SUBDIRS += \
-    dblsqd-sdk-qt/dblsqd-sdk-qt.pro
+include(dblsqd-sdk-qt/dblsqd-sdk-qt.pro)
 #/DBLSQD
 ```
 
