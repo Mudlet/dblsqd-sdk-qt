@@ -6,7 +6,7 @@ namespace dblsqd {
   \class Feed
  * \brief The Feed class provides methods for accessing DBLSQD Feeds and downloading Releases.
  *
- * A Feed is a representation of an Application’s Releases.
+ * A Feed is a representation of an Applicationâ€™s Releases.
  * This class can retrieve Feeds via HTTP(S) and offers convenience methods for
  *
  * \section3 Loading Feeds
