@@ -98,7 +98,7 @@ QUrl Feed::getUrl() {
  * If called before ready() was emitted, an empty list is returned.
  * \sa getReleases()
  */
-QList<Release> Feed::getUpdates() {
+QList<Release> Feed::getReleases() {
     return releases;
 }
 
