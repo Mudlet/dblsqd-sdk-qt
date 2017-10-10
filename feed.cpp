@@ -94,18 +94,20 @@ QUrl Feed::getUrl() {
 /*!
  * \brief Returns a list of all Releases in the Feed.
  *
+ * The list is sorted in descending order by version number/release date.
  * If called before ready() was emitted, an empty list is returned.
  * \sa getReleases()
  */
-QList<Release> Feed::getReleases() {
+QList<Release> Feed::getUpdates() {
     return releases;
 }
 
 /*!
  * \brief Returns a list of all Releases in the Feed that are newer than the given Release.
  *
+ * The list is sorted in descending order by version number/release date.
  * If called before ready() was emitted, an empty list is returned.
- * \sa getReleases()
+ * \sa getUpdates()
  */
 QList<Release> Feed::getUpdates(Release currentRelease) {
     QList<Release> updates;
