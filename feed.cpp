@@ -107,7 +107,7 @@ QList<Release> Feed::getReleases() {
  *
  * The list is sorted in descending order by version number/release date.
  * If called before ready() was emitted, an empty list is returned.
- * \sa getUpdates()
+ * \sa getReleases()
  */
 QList<Release> Feed::getUpdates(Release currentRelease) {
     QList<Release> updates;
