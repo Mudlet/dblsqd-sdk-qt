@@ -154,6 +154,11 @@ void UpdateDialog::accept() {
  * \brief Rejects the dialog.
  */
 void UpdateDialog::reject() {
+    if (type == OnLastWindowClosed) {
+        QGuiApplication* app = (QGuiApplication*) QApplication::instance();
+        app->setQuitOnLastWindowClosed(true);
+        disconnect(app, SIGNAL(lastWindowClosed()), this, SLOT(showIfUpdatesAvailable()));
+    }
     this->done(QDialog::Rejected);
 }
 
