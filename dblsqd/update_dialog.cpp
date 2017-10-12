@@ -1,4 +1,4 @@
-#include "update_dialog.h"
+#include "dblsqd/update_dialog.h"
 #include "ui_update_dialog.h"
 
 namespace dblsqd {
