@@ -1,2 +1,7 @@
 _build
 doxyxml
+ui_*
+CMakeCache.txt
+CMakeFiles
+cmake_install.cmake
+Makefile

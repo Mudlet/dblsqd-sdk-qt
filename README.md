@@ -11,19 +11,7 @@ and put them in your project folder. Then add the following section to your
 
 ```makefile
 #DBLSQD
-SOURCES +=  \
-    dblsqd-sdk-qt/feed.cpp \
-    dblsqd-sdk-qt/release.cpp \
-    dblsqd-sdk-qt/semver.cpp \
-    dblsqd-sdk-qt/update_dialog.cpp
-HEADERS += \
-    dblsqd-sdk-qt/feed.h \
-    dblsqd-sdk-qt/release.h \
-    dblsqd-sdk-qt/semver.h \
-    dblsqd-sdk-qt/update_dialog.h
-FORMS += dblsqd-sdk-qt/update_dialog.ui
-SUBDIRS += \
-    dblsqd-sdk-qt/dblsqd-sdk-qt.pro
+include(dblsqd-sdk-qt/dblsqd-sdk-qt.pri)
 #/DBLSQD
 ```
 
@@ -33,8 +21,8 @@ by initializing it in your `main.cpp`.
 
 First, add the necessary includes:
 ```cpp
-#include "dblsqd-sdk-qt/feed.h"
-#include "dblsqd-sdk-qt/update_dialog.h"
+#include "dblsqd/feed.h"
+#include "dblsqd/update_dialog.h"
 ```
 
 Then, initialize the update `Feed` and create an `updateDialog` object in
@@ -49,8 +37,8 @@ this:
 ```cpp
 #include "mainwindow.h"
 #include <QApplication>
-#include "dblsqd-sdk-qt/feed.h"
-#include "dblsqd-sdk-qt/update_dialog.h"
+#include "dblsqd/feed.h"
+#include "dblsqd/update_dialog.h"
 
 int main(int argc, char *argv[])
 {

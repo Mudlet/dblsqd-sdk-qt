@@ -1,0 +1,56 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
+
+IF(POLICY CMP0020)
+  CMAKE_POLICY(SET CMP0020 NEW)
+ENDIF()
+
+PROJECT(dblsqd-sdk-qt)
+
+SET(SOURCES
+  dblsqd/release.cpp
+  dblsqd/semver.cpp
+  dblsqd/update_dialog.cpp
+  dblsqd/feed.cpp
+)
+
+SET(HEADERS
+  dblsqd/release.h
+  dblsqd/semver.h
+  dblsqd/update_dialog.h
+  dblsqd/feed.h
+)
+
+FIND_PACKAGE(Qt5Core REQUIRED)
+FIND_PACKAGE(Qt5Network REQUIRED)
+FIND_PACKAGE(Qt5Widgets REQUIRED)
+
+IF(Qt5_POSITION_INDEPENDENT_CODE)
+  SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
+ENDIF()
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+ADD_DEFINITIONS(
+  ${Qt5Core_DEFINITIONS}
+  ${Qt5Network_DEFINTIONS}
+  ${Qt5Widgets_DEFINTIONS}
+)
+
+
+SET(CMAKE_INCLUDE_CURRENT_DIR ON)
+INCLUDE_DIRECTORIES(
+  ${Qt5Core_INCLUDE_DIRS}
+  ${Qt5Network_INCLUDE_DIRS}
+  ${Qt5Widgets_INCLUDE_DIRS}
+)
+
+ADD_LIBRARY(dblsqd STATIC
+  ${SOURCES} ${HEADERS}
+)
+
+TARGET_INCLUDE_DIRECTORIES(dblsqd PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${Qt5Core_INCLUDE_DIRS}
+  ${Qt5Network_INCLUDE_DIRS}
+  ${Qt5Widgets_INCLUDE_DIRS}
+)

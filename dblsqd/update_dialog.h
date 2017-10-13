@@ -1,7 +1,7 @@
 #ifndef DBLSQD_UPDATE_DIALOG_H
 #define DBLSQD_UPDATE_DIALOG_H
 
-#include "feed.h"
+#include "dblsqd/feed.h"
 #include "ui_update_dialog.h"
 #include <QSettings>
 #include <QTemporaryFile>
