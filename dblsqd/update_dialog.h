@@ -49,7 +49,7 @@ private:
     void toggleNoUpdates(bool noUpdates = true);
 
     void startDownload();
-    void startUpdate();
+    virtual void startUpdate();
 
     bool accepted;
     bool isDownloadFinished;
