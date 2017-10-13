@@ -94,6 +94,7 @@ QUrl Feed::getUrl() {
 /*!
  * \brief Returns a list of all Releases in the Feed.
  *
+ * The list is sorted in descending order by version number/release date.
  * If called before ready() was emitted, an empty list is returned.
  * \sa getReleases()
  */
@@ -104,6 +105,7 @@ QList<Release> Feed::getReleases() {
 /*!
  * \brief Returns a list of all Releases in the Feed that are newer than the given Release.
  *
+ * The list is sorted in descending order by version number/release date.
  * If called before ready() was emitted, an empty list is returned.
  * \sa getReleases()
  */
@@ -201,7 +203,7 @@ void Feed::makeDownloadRequest(QUrl url) {
 
 /*! \fn void Feed::downloadFinished()
  * This signal is emitted when the download of a Release was successful.
- * A QTemporaryFile* of the downlaoded file can then be retrieved with getDownloadFile().
+ * A QTemporaryFile* of the downloaded file can then be retrieved with getDownloadFile().
  * \sa downloadRelease()
  */
 
