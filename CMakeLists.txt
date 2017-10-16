@@ -58,4 +58,7 @@ TARGET_INCLUDE_DIRECTORIES(dblsqd PUBLIC
   ${Qt5Core_INCLUDE_DIRS}
   ${Qt5Network_INCLUDE_DIRS}
   ${Qt5Widgets_INCLUDE_DIRS}
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}/dblsqd_autogen/include
+  ${CMAKE_CURRENT_BINARY_DIR}/dblsqd_autogen/include_$<CONFIG>
 )
