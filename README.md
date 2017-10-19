@@ -79,5 +79,5 @@ details.
 
 ## Support
 Do you need help integrating DBLSQD into your Qt application?
-Please send us a message at https://www.dblsqd.com/contact and we�ll be happy
+Please send us a message at https://www.dblsqd.com/contact and we'll be happy
 to assist you.
