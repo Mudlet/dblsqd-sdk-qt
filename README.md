@@ -18,6 +18,8 @@ include(dblsqd-sdk-qt/dblsqd-sdk-qt.pri)
 If using CMake, add the following:
 ```cmake
 ADD_SUBDIRECTORY(dblsqd-sdk-qt)
+
+TARGET_LINK_LIBRARIES(<binary name> dblsqd)
 ```
 
 ## Usage
@@ -77,5 +79,5 @@ details.
 
 ## Support
 Do you need help integrating DBLSQD into your Qt application?
-Please send us a message at https://www.dblsqd.com/contact and we’ll be happy
+Please send us a message at https://www.dblsqd.com/contact and we'll be happy
 to assist you.
