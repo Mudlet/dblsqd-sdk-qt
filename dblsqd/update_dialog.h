@@ -17,7 +17,7 @@ class UpdateDialog : public QDialog
 
 public:
     enum Type {OnUpdateAvailable, OnLastWindowClosed, Manual};
-    explicit UpdateDialog(Feed* feed, Type = Type::OnUpdateAvailable, QWidget* parent = 0, QSettings* settings = new QSettings());
+    explicit UpdateDialog(Feed* feed, int = OnUpdateAvailable, QWidget* parent = 0, QSettings* settings = new QSettings());
     ~UpdateDialog();
 
     void setIcon(QString fileName);
@@ -36,7 +36,7 @@ public slots:
 private:
     Ui::UpdateDialog* ui;
     Feed* feed;
-    Type type;
+    int type;
 
     QSettings* settings;
     QString settingsGroup;

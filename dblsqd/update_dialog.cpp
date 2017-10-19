@@ -56,7 +56,7 @@ namespace dblsqd {
  * object, you may also pass it to this constructor.
  *
  */
-UpdateDialog::UpdateDialog(Feed* feed, Type type, QWidget* parent, QSettings* settings) :
+UpdateDialog::UpdateDialog(Feed* feed, int type, QWidget* parent, QSettings* settings) :
     QDialog(parent),
     ui(new Ui::UpdateDialog),
     feed(feed),
