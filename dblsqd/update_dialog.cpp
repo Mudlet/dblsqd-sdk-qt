@@ -90,17 +90,17 @@ UpdateDialog::UpdateDialog(Feed* feed, Type type, QWidget* parent, QSettings* se
     connect(ui->checkAutoDownload, SIGNAL(toggled(bool)), this, SLOT(toggleAutoDownloads(bool)));
 
     switch(type) {
-        case Type::OnUpdateAvailable: {
+        case OnUpdateAvailable: {
             connect(this, SIGNAL(ready()), this, SLOT(showIfUpdatesAvailable()));
             break;
         }
-        case Type::OnLastWindowClosed: {
+        case OnLastWindowClosed: {
             QGuiApplication* app = (QGuiApplication*) QApplication::instance();
             app->setQuitOnLastWindowClosed(false);
             connect(app, SIGNAL(lastWindowClosed()), this, SLOT(showIfUpdatesAvailable()));
             break;
         }
-        case Type::Manual: {
+        case Manual: {
             //don’t need to do anything
         }
     }
