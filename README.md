@@ -15,6 +15,11 @@ include(dblsqd-sdk-qt/dblsqd-sdk-qt.pri)
 #/DBLSQD
 ```
 
+If using CMake, add the following:
+```cmake
+ADD_SUBDIRECTORY(dblsqd-sdk-qt)
+```
+
 ## Usage
 The easiest way to integrate the DBLSQD auto-updater into your application is
 by initializing it in your `main.cpp`.
@@ -72,5 +77,5 @@ details.
 
 ## Support
 Do you need help integrating DBLSQD into your Qt application?
-Please send us a message at https://www.dblsqd.com/contact and weâ€™ll be happy
+Please send us a message at https://www.dblsqd.com/contact and we’ll be happy
 to assist you.
