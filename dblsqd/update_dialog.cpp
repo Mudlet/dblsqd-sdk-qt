@@ -24,7 +24,7 @@ namespace dblsqd {
 
 /*!
  * \enum UpdateDialog::Type
- * \brief This flag determines the when/if an UpdateDialog is displayed automatically.
+ * \brief This flag determines the if and when the UpdateDialog is displayed automatically.
  *
  * *OnUpdateAvailable*: Automatically display the dialog as soon as the Feed
  * has been downloaded and parsed and if there is a newer version than the
@@ -67,27 +67,9 @@ UpdateDialog::UpdateDialog(Feed* feed, int type, QWidget* parent, QSettings* set
     isDownloadFinished(false)
 {
     ui->setupUi(this);
-    toggleNoUpdates(true);
-
-    ui->progressBar->setHidden(true);
-    ui->labelIcon->setHidden(true);
-
-    QString headline = ui->labelHeadlineNoUpdates->text();
-    replaceAppVars(headline);
-    ui->labelHeadlineNoUpdates->setText(headline);
-
-    connect(feed, SIGNAL(ready()), this, SLOT(handleFeedReady()));
-    connect(feed, SIGNAL(downloadFinished()), this, SLOT(handleDownloadFinished()));
-    connect(feed, SIGNAL(downloadError(QString)), this, SLOT(handleDownloadError(QString)));
-    connect(feed, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(updateProgressBar(qint64,qint64)));
-
-    connect(ui->buttonConfirmNoUpdates, SIGNAL(clicked()), this, SLOT(accept()));
-    connect(ui->buttonConfirm, SIGNAL(clicked()), this, SLOT(accept()));
-    connect(ui->buttonSkip, SIGNAL(clicked()), this, SLOT(skip()));
-    connect(ui->buttonCancel, SIGNAL(clicked()), this, SLOT(reject()));
-
-    ui->checkAutoDownload->setChecked(settingsValue("autoDownload", false).toBool());
-    connect(ui->checkAutoDownload, SIGNAL(toggled(bool)), this, SLOT(toggleAutoDownloads(bool)));
+    ui->buttonCancel->addAction(ui->actionCancel);
+    ui->buttonCancel->addAction(ui->actionSkip);
+    ui->buttonCancel->setDefaultAction(ui->actionCancel);
 
     switch(type) {
         case OnUpdateAvailable: {
@@ -101,10 +83,18 @@ UpdateDialog::UpdateDialog(Feed* feed, int type, QWidget* parent, QSettings* set
             break;
         }
         case Manual: {
-            //don’t need to do anything
+            //don’t do anything
         }
     }
-    feed->load();
+
+
+    if (feed->isReady()) {
+        handleFeedReady();
+    } else {
+        setupLoadingUi();
+        feed->load();
+        connect(feed, SIGNAL(ready()), this, SLOT(handleFeedReady()));
+    }
 }
 
 UpdateDialog::~UpdateDialog()
@@ -134,12 +124,12 @@ void UpdateDialog::setIcon(QString fileName) {
  * Public Slots
  */
 /*!
- * \brief Accepts the dialog.
+ * \brief Default handler for the install button.
  *
- * Accepting the UpdateDialog closes the dialog if no other action (such as
+ * Closes the dialog if no other action (such as
  * downloading or installing a Release) is required first.
  */
-void UpdateDialog::accept() {
+void UpdateDialog::onButtonInstall() {
     accepted = true;
     if (isDownloadFinished) {
         startUpdate();
@@ -206,39 +196,144 @@ void UpdateDialog::removeSetting(QString key) {
     settings->remove(settingsGroup + "/" + key);
 }
 
-void UpdateDialog::disableButtons(bool disable) {
-    ui->buttonCancel->setDisabled(disable);
-    ui->buttonConfirm->setDisabled(disable);
-    ui->buttonSkip->setDisabled(disable);
-    ui->checkAutoDownload->setDisabled(disable);
+void UpdateDialog::resetUi() {
+    QList<QWidget*> hiddenWidgets;
+    hiddenWidgets << ui->headerContainer
+                  << ui->labelIcon
+                  << ui->headerContainerLoading
+                  << ui->headerContainerNoUpdates
+                  << ui->scrollAreaChangelog
+                  << ui->progressBar
+                  << ui->checkAutoDownload
+                  << ui->buttonCancel
+                  << ui->buttonCancelLoading
+                  << ui->buttonConfirm
+                  << ui->buttonInstall
+                  << ui->buttonInstallAndRestart
+                  << ui->buttonInstallAndQuit;
+    for (int i = 0; i < hiddenWidgets.size(); i ++) {
+        hiddenWidgets.at(i)->hide();
+        hiddenWidgets.at(i)->disconnect();
+    }
+    ui->progressBar->reset();
+    adjustSize();
 }
 
-void UpdateDialog::toggleNoUpdates(bool noUpdates) {
-    //Show these elements when there are no updates
-    ui->headerContainerNoUpdates->setHidden(!noUpdates);
-    ui->buttonConfirmNoUpdates->setHidden(!noUpdates);
+void UpdateDialog::setupLoadingUi() {
+    resetUi();
+    ui->headerContainerLoading->show();
+    ui->progressBar->show();
+    ui->progressBar->setMaximum(0);
+    ui->progressBar->setMinimum(0);
+    ui->buttonCancelLoading->show();
+    ui->buttonCancelLoading->setFocus();
+    connect(ui->buttonCancelLoading, SIGNAL(clicked(bool)), this, SLOT(reject()));
+}
 
-    //Show these elements when there are updates
-    ui->headerContainer->setHidden(noUpdates);
-    ui->buttonSkip->setHidden(noUpdates);
-    ui->scrollAreaChangelog->setHidden(noUpdates);
-    ui->buttonCancel->setHidden(noUpdates);
-    ui->buttonConfirm->setHidden(noUpdates);
-    ui->buttonSkip->setHidden(noUpdates);
+void UpdateDialog::setupUpdateUi() {
+    resetUi();
 
-    //Focus the respective confirm button
-    if (noUpdates) {
-        ui->buttonConfirmNoUpdates->setFocus();
-    } else {
-        ui->buttonConfirm->setFocus();
+    QList<QWidget*> showWidgets;
+    showWidgets << ui->headerContainer
+                << ui->scrollAreaChangelog
+                << ui->checkAutoDownload
+                << ui->buttonCancel
+                << ui->buttonInstall;
+    for (int i = 0; i < showWidgets.size(); i++) {
+        showWidgets.at(i)->show();
     }
-    this->adjustSize();
+    ui->buttonInstall->setFocus();
+
+    QList<QLabel*> labels;
+    labels << ui->labelHeadline
+           << ui->labelInfo;
+    for (int i = 0; i < labels.size(); i++) {
+        QString text = labels.at(i)->text();
+        replaceAppVars(text);
+        labels.at(i)->setText(text);
+    }
+    ui->labelChangelog->setText(generateChangelogDocument());
+
+    ui->checkAutoDownload->setChecked(settingsValue("autoDownload", false).toBool());
+
+    //Check if the current update has been skipped
+    bool skipRelease = (settingsValue("skipRelease").toString() == latestRelease.getVersion());
+
+    //Adapt buttons if release has been downloaded already
+    if (isDownloadFinished) {
+        ui->progressBar->show();
+        ui->progressBar->setMaximum(1);
+        ui->progressBar->setValue(1);
+    }
+    bool autoDownload = ui->checkAutoDownload->isChecked() && (!skipRelease);
+    if (autoDownload && !isDownloadFinished) {
+        startDownload();
+    }
+    if (isDownloadFinished || autoDownload) {
+        //ui->buttonConfirm->setText(tr("Install update now"));
+        //ui->buttonCancel->setText(tr("Install update later"));
+    }
+
+    connect(feed, SIGNAL(downloadFinished()), this, SLOT(handleDownloadFinished()));
+    connect(feed, SIGNAL(downloadError(QString)), this, SLOT(handleDownloadError(QString)));
+    connect(feed, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(updateProgressBar(qint64,qint64)));
+
+    connect(ui->buttonConfirm, SIGNAL(clicked()), this, SLOT(accept()));
+    connect(ui->buttonInstall, SIGNAL(clicked()), this, SLOT(onButtonInstall()));
+    connect(ui->actionCancel, SIGNAL(triggered()), this, SLOT(reject()));
+    connect(ui->actionSkip, SIGNAL(triggered()), this, SLOT(skip()));
+    connect(ui->checkAutoDownload, SIGNAL(toggled(bool)), this, SLOT(toggleAutoDownloads(bool)));
+}
+
+void UpdateDialog::setupNoUpdatesUi() {
+    resetUi();
+    QList<QWidget*> showWidgets;
+    showWidgets << ui->headerContainerNoUpdates
+                << ui->buttonConfirm;
+    for (int i = 0; i < showWidgets.size(); i++) {
+        showWidgets.at(i)->show();
+    }
+    ui->buttonConfirm->setFocus();
+
+    QString text = ui->labelHeadlineNoUpdates->text();
+    replaceAppVars(text);
+    ui->labelHeadlineNoUpdates->setText(text);
+
+    connect(ui->buttonConfirm, SIGNAL(clicked(bool)), this, SLOT(accept()));
+}
+
+void UpdateDialog::disableButtons(bool disable) {
+    QList<QWidget*> buttons;
+    buttons << ui->buttonCancel
+            << ui->buttonCancelLoading
+            << ui->buttonConfirm
+            << ui->buttonConfirm
+            << ui->buttonInstall
+            << ui->buttonInstallAndRestart
+            << ui->buttonInstallAndQuit
+            << ui->checkAutoDownload;
+    for (int i = 0; i < buttons.size(); i++) {
+        buttons.at(i)->setDisabled(disable);
+    }
 }
 
 void UpdateDialog::replaceAppVars(QString &string) {
     string.replace("%APPNAME%", QCoreApplication::applicationName());
     string.replace("%CURRENT_VERSION%", QCoreApplication::applicationVersion());
     string.replace("%UPDATE_VERSION%", latestRelease.getVersion());
+}
+
+QString UpdateDialog::generateChangelogDocument() {
+    QString changelog;
+    for (int i = 0; i < updates.size(); i++) {
+        QString h2Style = "font-size: medium;";
+        if (i > 0) {
+            h2Style.append("margin-top: 1em;");
+        }
+        changelog.append("<h2 style=\"" + h2Style + "\">" + updates.at(i).getVersion() + "</h2>");
+        changelog.append("<p>" + updates.at(i).getChangelog() + "</p>");
+    }
+    return changelog;
 }
 
 void UpdateDialog::startDownload() {
@@ -267,7 +362,7 @@ void UpdateDialog::toggleAutoDownloads(bool enable) {
 void UpdateDialog::handleFeedReady() {
     //Retrieve update information
     Release currentRelease(QApplication::applicationVersion());
-    QList<Release> updates = feed->getUpdates(currentRelease);
+    updates = feed->getUpdates(currentRelease);
     if (!updates.isEmpty()) {
         latestRelease = updates.first();
     }
@@ -287,48 +382,12 @@ void UpdateDialog::handleFeedReady() {
     }
 
     //Check if there are any updates
-    if (updates.isEmpty()) return;
-    toggleNoUpdates(false);
-
-    //Populate dialog header
-    QString headline = ui->labelHeadline->text();
-    replaceAppVars(headline);
-    ui->labelHeadline->setText(headline);
-
-    QString info = ui->labelInfo->text();
-    replaceAppVars(info);
-    ui->labelInfo->setText(info);
-
-    //Populate changelog label
-    QString changelog;
-    for (int i = 0; i < updates.size(); i++) {
-        QString h2Style = "font-size: medium;";
-        if (i > 0) {
-            h2Style.append("margin-top: 1em;");
-        }
-        changelog.append("<h2 style=\"" + h2Style + "\">" + updates.at(i).getVersion() + "</h2>");
-        changelog.append("<p>" + updates.at(i).getChangelog() + "</p>");
-    }
-    ui->labelChangelog->setText(changelog);
-
-    //Check if the current update has been skipped
-    bool skipRelease = (settingsValue("skipRelease").toString() == latestRelease.getVersion());
-
-    //Adapt buttons if release should be downloaded automatically or has been downloaded already
-    if (isDownloadFinished) {
-        ui->progressBar->show();
-        ui->progressBar->setMaximum(1);
-        ui->progressBar->setValue(1);
-    }
-    bool autoDownload = ui->checkAutoDownload->isChecked() && (!skipRelease);
-    if (autoDownload && !isDownloadFinished) {
-        startDownload();
-    }
-    if (isDownloadFinished || autoDownload) {
-        ui->buttonConfirm->setText(tr("Install update now"));
-        ui->buttonCancel->setText(tr("Install update later"));
+    if (updates.isEmpty()) {
+        setupNoUpdatesUi();
+        return;
     }
 
+    setupUpdateUi();
     emit ready();
 }
 

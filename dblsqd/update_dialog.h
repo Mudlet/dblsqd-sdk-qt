@@ -28,7 +28,7 @@ signals:
     void aboutToShow();
 
 public slots:
-    void accept();
+    void onButtonInstall();
     void skip();
     void reject();
     void showIfUpdatesAvailable();
@@ -44,9 +44,13 @@ private:
     QVariant settingsValue(QString key, QVariant defaultValue = QVariant());
     void removeSetting(QString key);
     void replaceAppVars(QString& string);
+    QString generateChangelogDocument();
 
     void disableButtons(bool disable = true);
-    void toggleNoUpdates(bool noUpdates = true);
+    void resetUi();
+    void setupLoadingUi();
+    void setupUpdateUi();
+    void setupNoUpdatesUi();
 
     void startDownload();
     virtual void startUpdate();
@@ -54,6 +58,7 @@ private:
     bool accepted;
     bool isDownloadFinished;
     QString updateFilePath;
+    QList<Release> updates;
     Release latestRelease;
 
 private slots:

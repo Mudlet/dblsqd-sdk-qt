@@ -21,6 +21,37 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
+    <widget class="QWidget" name="headerContainerLoading" native="true">
+     <layout class="QGridLayout" name="gridLayout_4">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>6</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="labelHeadlineLoading">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Loading update information …</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="QWidget" name="headerContainer" native="true">
      <layout class="QGridLayout" name="gridLayout">
       <property name="leftMargin">
@@ -187,9 +218,6 @@ Would you like to update now?</string>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;asdasd&lt;/p&gt;&lt;p&gt;a&lt;/p&gt;&lt;p&gt;sda&lt;/p&gt;&lt;p&gt;sda&lt;/p&gt;&lt;p&gt;sd&lt;/p&gt;&lt;p&gt;a&lt;/p&gt;&lt;p&gt;sda&lt;/p&gt;&lt;p&gt;sd&lt;/p&gt;&lt;p&gt;as&lt;/p&gt;&lt;p&gt;da&lt;/p&gt;&lt;p&gt;sda&lt;/p&gt;&lt;p&gt;d&lt;/p&gt;&lt;p&gt;as&lt;/p&gt;&lt;p&gt;da&lt;/p&gt;&lt;p&gt;sda&lt;/p&gt;&lt;p&gt;sd&lt;/p&gt;&lt;p&gt;a&lt;/p&gt;&lt;p&gt;sda&lt;/p&gt;&lt;p&gt;sd&lt;/p&gt;&lt;p&gt;asd&lt;/p&gt;&lt;p&gt;assd&lt;/p&gt;&lt;p&gt;a&lt;/p&gt;&lt;p&gt;sda&lt;/p&gt;&lt;p&gt;sd&lt;/p&gt;&lt;p&gt;ad&lt;/p&gt;&lt;p&gt;a&lt;/p&gt;&lt;p&gt;da&lt;/p&gt;&lt;p&gt;sdaqsd&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
          <property name="textFormat">
           <enum>Qt::RichText</enum>
          </property>
@@ -240,6 +268,7 @@ Would you like to update now?</string>
    </item>
    <item>
     <widget class="QWidget" name="buttonContainer" native="true">
+     </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="spacing">
        <number>12</number>
@@ -257,9 +286,25 @@ Would you like to update now?</string>
        <number>0</number>
       </property>
       <item>
-       <widget class="QPushButton" name="buttonSkip">
+       <widget class="QToolButton" name="buttonCancel">
+        <property name="contextMenuPolicy">
+         <enum>Qt::ActionsContextMenu</enum>
+        </property>
+        <property name="popupMode">
+         <enum>QToolButton::MenuButtonPopup</enum>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonFollowStyle</enum>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="buttonCancelLoading">
         <property name="text">
-         <string>Skip this version</string>
+         <string>Cancel</string>
         </property>
        </widget>
       </item>
@@ -277,7 +322,6 @@ Would you like to update now?</string>
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="buttonCancel">
         <property name="text">
          <string>Remind me later</string>
         </property>
@@ -291,7 +335,13 @@ Would you like to update now?</string>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="buttonConfirmNoUpdates">
+       <widget class="QPushButton" name="buttonInstall">
+        <property name="text">
+         <string>Install update</string>
+        </property>
+       </widget>
+      </item>
+      <item>
         <property name="text">
          <string>OK</string>
         </property>
@@ -301,13 +351,20 @@ Would you like to update now?</string>
     </widget>
    </item>
   </layout>
+  <action name="actionCancel">
+   <property name="text">
+    <string>Remind me later</string>
+   </property>
+  </action>
+  <action name="actionSkip">
+   <property name="text">
+    <string>Skip this version</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
-  <tabstop>buttonConfirm</tabstop>
   <tabstop>checkAutoDownload</tabstop>
-  <tabstop>buttonSkip</tabstop>
-  <tabstop>buttonCancel</tabstop>
  </tabstops>
  <resources/>
  <connections/>
