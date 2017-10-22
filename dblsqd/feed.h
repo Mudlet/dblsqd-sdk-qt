@@ -26,6 +26,7 @@ public:
     QList<Release> getUpdates(Release currentRelease = Release(QCoreApplication::applicationVersion()));
     QList<Release> getReleases();
     QTemporaryFile* getDownloadFile();
+    bool isReady();
 
 signals:
     void ready();
@@ -47,6 +48,7 @@ private:
     QNetworkReply* downloadReply;
     QTemporaryFile* downloadFile;
     uint redirects;
+    bool _ready;
 
 private slots:
     void handleFeedFinished();

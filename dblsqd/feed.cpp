@@ -25,7 +25,8 @@ namespace dblsqd {
 Feed::Feed(QString baseUrl, QString channel, QString os, QString arch, QString type)
     : feedReply(NULL),
       downloadReply(NULL),
-      downloadFile(NULL)
+      downloadFile(NULL),
+      _ready(false)
 {
     if (!baseUrl.isEmpty()) {
         this->setUrl(baseUrl, channel, os, arch, type);
@@ -125,6 +126,16 @@ QList<Release> Feed::getUpdates(Release currentRelease) {
  */
 QTemporaryFile* Feed::getDownloadFile() {
     return downloadFile;
+}
+
+/*!
+ * \brief Returns true if Feed information has been retrieved successfully.
+ *
+ * A ready Feed might not contain any release information.
+ * If downloading the Feed failed, false is returned.
+ */
+bool Feed::isReady() {
+    return _ready;
 }
 
 
@@ -233,6 +244,7 @@ void Feed::handleFeedFinished() {
     std::sort(releases.begin(), releases.end());
     std::reverse(releases.begin(), releases.end());
 
+    _ready = true;
     emit ready();
 }
 
