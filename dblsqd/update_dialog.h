@@ -30,8 +30,8 @@ signals:
 public slots:
     void onButtonInstall();
     void skip();
-    void reject();
     void showIfUpdatesAvailable();
+    void showIfUpdatesAvailableOrQuit();
 
 private:
     Ui::UpdateDialog* ui;

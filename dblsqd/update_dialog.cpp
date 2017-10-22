@@ -79,7 +79,7 @@ UpdateDialog::UpdateDialog(Feed* feed, int type, QWidget* parent, QSettings* set
         case OnLastWindowClosed: {
             QGuiApplication* app = (QGuiApplication*) QApplication::instance();
             app->setQuitOnLastWindowClosed(false);
-            connect(app, SIGNAL(lastWindowClosed()), this, SLOT(showIfUpdatesAvailable()));
+            connect(app, SIGNAL(lastWindowClosed()), this, SLOT(showIfUpdatesAvailableOrQuit()));
             break;
         }
         case Manual: {
@@ -141,18 +141,6 @@ void UpdateDialog::onButtonInstall() {
 }
 
 /*!
- * \brief Rejects the dialog.
- */
-void UpdateDialog::reject() {
-    if (type == OnLastWindowClosed) {
-        QGuiApplication* app = (QGuiApplication*) QApplication::instance();
-        app->setQuitOnLastWindowClosed(true);
-        disconnect(app, SIGNAL(lastWindowClosed()), this, SLOT(showIfUpdatesAvailable()));
-    }
-    this->done(QDialog::Rejected);
-}
-
-/*!
  * \brief Skips the latest retrieved Release.
  *
  * If a release has been skipped, UpdateDialog will not be displayed
@@ -177,6 +165,24 @@ void UpdateDialog::showIfUpdatesAvailable() {
     bool skipRelease = (settingsValue("skipRelease").toString() == latestVersion);
     if (!latestVersion.isEmpty() && !skipRelease) {
         show();
+    }
+}
+
+/*!
+  * \brief Shows the dialog if there are updates available or quits the application.
+  */
+void UpdateDialog::showIfUpdatesAvailableOrQuit() {
+    if (type == OnLastWindowClosed) {
+        QGuiApplication* app = (QGuiApplication*) QApplication::instance();
+        app->setQuitOnLastWindowClosed(true);
+        disconnect(app, SIGNAL(lastWindowClosed()), this, SLOT(showIfUpdatesAvailableOrQuit()));
+    }
+    QString latestVersion = latestRelease.getVersion();
+    bool skipRelease = (settingsValue("skipRelease").toString() == latestVersion);
+    if (!latestVersion.isEmpty() && !skipRelease) {
+        show();
+    } else {
+        QCoreApplication::quit();
     }
 }
 
