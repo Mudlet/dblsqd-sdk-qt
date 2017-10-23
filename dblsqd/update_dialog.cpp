@@ -68,7 +68,8 @@ UpdateDialog::UpdateDialog(Feed* feed, int type, QWidget* parent, QSettings* set
     settings(settings),
     settingsGroup("DBLSQD"),
     accepted(false),
-    isDownloadFinished(false)
+    isDownloadFinished(false),
+    acceptedInstallButton(NULL)
 {
     ui->setupUi(this);
     ui->buttonCancel->addAction(ui->actionCancel);
@@ -123,6 +124,21 @@ void UpdateDialog::setIcon(QString fileName) {
     ui->labelIcon->setHidden(false);
 }
 
+/*!
+ * \brief Adds a custom button for handling update installation.
+ * \param button
+ *
+ * When the custom button is clicked after an update has been downloaded or when
+ * downloading an update that was started by clicking the button has finished,
+ * installButtonClicked(QAbstractButton* button, QString filePath) is emitted.
+ */
+void UpdateDialog::addInstallButton(QAbstractButton *button) {
+    installButtons.append(button);
+    ui->buttonContainer->layout()->addWidget(button);
+    if (isVisible() && ui->buttonCancel->isVisible()) {
+        setupUpdateUi();
+    }
+}
 
 /*
  * Public Slots
@@ -137,7 +153,19 @@ void UpdateDialog::onButtonInstall() {
     accepted = true;
     if (isDownloadFinished) {
         startUpdate();
-    } else if(!latestRelease.getVersion().isEmpty()) {
+    } else if (!latestRelease.getVersion().isEmpty()) {
+        startDownload();
+    } else {
+        done(QDialog::Accepted);
+    }
+}
+
+void UpdateDialog::onButtonCustomInstall() {
+    accepted = true;
+    if (isDownloadFinished) {
+        emit installButtonClicked((QAbstractButton*) sender(), updateFilePath);
+    } else if (!latestRelease.getVersion().isEmpty()) {
+        acceptedInstallButton = (QAbstractButton*) sender();
         startDownload();
     } else {
         done(QDialog::Accepted);
@@ -208,6 +236,9 @@ void UpdateDialog::removeSetting(QString key) {
 
 void UpdateDialog::resetUi() {
     QList<QWidget*> hiddenWidgets;
+    for (int i = 0; i < installButtons.size(); i++) {
+        hiddenWidgets << installButtons.at(i);
+    }
     hiddenWidgets << ui->headerContainer
                   << ui->labelIcon
                   << ui->headerContainerLoading
@@ -219,9 +250,7 @@ void UpdateDialog::resetUi() {
                   << ui->buttonCancel
                   << ui->buttonCancelLoading
                   << ui->buttonConfirm
-                  << ui->buttonInstall
-                  << ui->buttonInstallAndRestart
-                  << ui->buttonInstallAndQuit;
+                  << ui->buttonInstall;
     for (int i = 0; i < hiddenWidgets.size(); i ++) {
         hiddenWidgets.at(i)->hide();
         hiddenWidgets.at(i)->disconnect();
@@ -253,7 +282,6 @@ void UpdateDialog::setupUpdateUi() {
     for (int i = 0; i < showWidgets.size(); i++) {
         showWidgets.at(i)->show();
     }
-    ui->buttonInstall->setFocus();
 
     QList<QLabel*> labels;
     labels << ui->labelHeadline
@@ -276,24 +304,29 @@ void UpdateDialog::setupUpdateUi() {
         ui->progressBar->setMaximum(1);
         ui->progressBar->setValue(1);
     }
-    bool autoDownload = ui->checkAutoDownload->isChecked() && (!skipRelease);
-    if (autoDownload && !isDownloadFinished) {
-        startDownload();
-    }
-    if (isDownloadFinished || autoDownload) {
-        //ui->buttonConfirm->setText(tr("Install update now"));
-        //ui->buttonCancel->setText(tr("Install update later"));
-    }
 
     connect(feed, SIGNAL(downloadFinished()), this, SLOT(handleDownloadFinished()));
     connect(feed, SIGNAL(downloadError(QString)), this, SLOT(handleDownloadError(QString)));
     connect(feed, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(updateProgressBar(qint64,qint64)));
 
     connect(ui->buttonConfirm, SIGNAL(clicked()), this, SLOT(accept()));
-    connect(ui->buttonInstall, SIGNAL(clicked()), this, SLOT(onButtonInstall()));
     connect(ui->actionCancel, SIGNAL(triggered()), this, SLOT(reject()));
     connect(ui->actionSkip, SIGNAL(triggered()), this, SLOT(skip()));
     connect(ui->checkAutoDownload, SIGNAL(toggled(bool)), this, SLOT(toggleAutoDownloads(bool)));
+
+    //Install buttons
+    if (installButtons.isEmpty()) {
+        ui->buttonInstall->setFocus();
+        connect(ui->buttonInstall, SIGNAL(clicked()), this, SLOT(onButtonInstall()));
+    } else {
+        ui->buttonInstall->hide();
+        for (int i = 0; i < installButtons.size(); i++) {
+            installButtons.at(i)->show();
+            connect(installButtons.at(i), SIGNAL(clicked(bool)), this, SLOT(onButtonCustomInstall()));
+        }
+        installButtons.last()->setFocus();
+    }
+
 }
 
 void UpdateDialog::setupChangelogUi() {
@@ -338,13 +371,14 @@ void UpdateDialog::setupNoUpdatesUi() {
 
 void UpdateDialog::disableButtons(bool disable) {
     QList<QWidget*> buttons;
+    for (int i = 0; i < installButtons.size(); i++) {
+        buttons << installButtons.at(i);
+    }
     buttons << ui->buttonCancel
             << ui->buttonCancelLoading
             << ui->buttonConfirm
             << ui->buttonConfirm
             << ui->buttonInstall
-            << ui->buttonInstallAndRestart
-            << ui->buttonInstallAndQuit
             << ui->checkAutoDownload;
     for (int i = 0; i < buttons.size(); i++) {
         buttons.at(i)->setDisabled(disable);
@@ -427,6 +461,15 @@ void UpdateDialog::handleFeedReady() {
         return;
     }
 
+    //Automatic downloads
+    QString latestVersion = latestRelease.getVersion();
+    bool skipRelease = (settingsValue("skipRelease").toString() == latestVersion);
+    bool autoDownload = settingsValue("autoDownload", false).toBool() && (!skipRelease);
+    if (autoDownload && !isDownloadFinished) {
+        startDownload();
+    }
+
+    //Setup UI
     setupUpdateUi();
     emit ready();
 }
@@ -442,7 +485,12 @@ void UpdateDialog::handleDownloadFinished() {
     setSettingsValue("updateFileVersion", latestRelease.getVersion());
 
     if (accepted) {
-        startUpdate();
+        if (acceptedInstallButton == NULL) {
+            startUpdate();
+        } else {
+            emit installButtonClicked(acceptedInstallButton, updateFilePath);
+        }
+
     } else {
         disableButtons(false);
     }
@@ -471,6 +519,10 @@ void UpdateDialog::updateProgressBar(qint64 bytesReceived, qint64 bytesTotal) {
 /*! \fn void Feed::ready()
  * This signal is emitted when a updates are available and the UpdateDialog is
  * ready to be shown with show() or exec().
+ */
+
+/*! \fn void Feed::installButtonClicked(QAbstractButton* button, QString filePath)
+ * This signal is emitted when a custom install button was clicked.
  */
 
 } // namespace dblsqd

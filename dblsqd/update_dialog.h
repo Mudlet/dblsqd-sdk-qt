@@ -22,13 +22,15 @@ public:
 
     void setIcon(QString fileName);
     void setIcon(QPixmap pixmap);
+    void addInstallButton(QAbstractButton* button);
 
 signals:
     void ready();
-    void aboutToShow();
+    void installButtonClicked(QAbstractButton* button, QString filePath);
 
 public slots:
     void onButtonInstall();
+    void onButtonCustomInstall();
     void skip();
     void showIfUpdatesAvailable();
     void showIfUpdatesAvailableOrQuit();
@@ -61,6 +63,8 @@ private:
     QString updateFilePath;
     QList<Release> updates;
     Release latestRelease;
+    QList<QAbstractButton*> installButtons;
+    QAbstractButton* acceptedInstallButton;
 
 private slots:
     void toggleAutoDownloads(bool);
