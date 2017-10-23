@@ -116,6 +116,44 @@ Would you like to update now?</string>
     </widget>
    </item>
    <item>
+    <widget class="QWidget" name="headerContainerChangelog" native="true">
+     <layout class="QGridLayout" name="gridLayout_3">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>6</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>18</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="labelHeadlineChangelog">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Changelog for %APPNAME%</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="labelInfoChangelog">
+        <property name="text">
+         <string>You are using version %CURRENT_VERSION%.</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="QWidget" name="headerContainerNoUpdates" native="true">
      <layout class="QGridLayout" name="gridLayout_2">
       <property name="leftMargin">

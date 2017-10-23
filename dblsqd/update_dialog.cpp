@@ -40,6 +40,10 @@ namespace dblsqd {
  * or exec().
  * Note that update information might not be available instantly after
  * constructing an UpdateDialog.
+ *
+ * *ManualChangelog*: The dialog is only displayed when explicitly requested via
+ * show() or exec().
+ * Instead of the full update interface, only the changelog will be shown.
  */
 
 /*!
@@ -208,6 +212,7 @@ void UpdateDialog::resetUi() {
                   << ui->labelIcon
                   << ui->headerContainerLoading
                   << ui->headerContainerNoUpdates
+                  << ui->headerContainerChangelog
                   << ui->scrollAreaChangelog
                   << ui->progressBar
                   << ui->checkAutoDownload
@@ -291,6 +296,29 @@ void UpdateDialog::setupUpdateUi() {
     connect(ui->checkAutoDownload, SIGNAL(toggled(bool)), this, SLOT(toggleAutoDownloads(bool)));
 }
 
+void UpdateDialog::setupChangelogUi() {
+    resetUi();
+
+    QList<QWidget*> showWidgets;
+    showWidgets << ui->headerContainerChangelog
+                << ui->buttonConfirm
+                << ui->scrollAreaChangelog;
+    for (int i = 0; i < showWidgets.size(); i++) {
+        showWidgets.at(i)->show();
+    }
+    QList<QLabel*> labels;
+    labels << ui->labelHeadlineChangelog
+           << ui->labelInfoChangelog;
+    for (int i = 0; i < labels.size(); i++) {
+        QString text = labels.at(i)->text();
+        replaceAppVars(text);
+        labels.at(i)->setText(text);
+    }
+    ui->labelChangelog->setText(generateChangelogDocument());
+    connect(ui->buttonConfirm, SIGNAL(clicked(bool)), this, SLOT(accept()));
+    ui->buttonConfirm->setFocus();
+}
+
 void UpdateDialog::setupNoUpdatesUi() {
     resetUi();
     QList<QWidget*> showWidgets;
@@ -371,6 +399,12 @@ void UpdateDialog::handleFeedReady() {
     updates = feed->getUpdates(currentRelease);
     if (!updates.isEmpty()) {
         latestRelease = updates.first();
+    }
+
+    if (type == ManualChangelog) {
+        setupChangelogUi();
+        emit ready();
+        return;
     }
 
     //Check if an update has been downloaded previously

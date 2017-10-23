@@ -16,7 +16,7 @@ class UpdateDialog : public QDialog
     Q_OBJECT
 
 public:
-    enum Type {OnUpdateAvailable, OnLastWindowClosed, Manual};
+    enum Type {OnUpdateAvailable, OnLastWindowClosed, Manual, ManualChangelog};
     explicit UpdateDialog(Feed* feed, int = OnUpdateAvailable, QWidget* parent = 0, QSettings* settings = new QSettings());
     ~UpdateDialog();
 
@@ -50,6 +50,7 @@ private:
     void resetUi();
     void setupLoadingUi();
     void setupUpdateUi();
+    void setupChangelogUi();
     void setupNoUpdatesUi();
 
     void startDownload();
