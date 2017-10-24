@@ -295,9 +295,6 @@ void UpdateDialog::setupUpdateUi() {
 
     ui->checkAutoDownload->setChecked(settingsValue("autoDownload", false).toBool());
 
-    //Check if the current update has been skipped
-    bool skipRelease = (settingsValue("skipRelease").toString() == latestRelease.getVersion());
-
     //Adapt buttons if release has been downloaded already
     if (isDownloadFinished) {
         ui->progressBar->show();
