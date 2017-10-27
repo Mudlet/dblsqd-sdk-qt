@@ -149,9 +149,7 @@ bool Feed::isReady() {
  */
 void Feed::load() {
     if (feedReply != NULL && !feedReply->isFinished()) {
-        disconnect(feedReply);
-        feedReply->abort();
-        feedReply->deleteLater();
+        return;
     }
 
     QNetworkRequest request(getUrl());
