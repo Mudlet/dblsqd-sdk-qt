@@ -23,6 +23,7 @@ public:
     void setIcon(QString fileName);
     void setIcon(QPixmap pixmap);
     void addInstallButton(QAbstractButton* button);
+    bool autoDownloadEnabled();
 
 signals:
     void ready();
@@ -34,6 +35,7 @@ public slots:
     void skip();
     void showIfUpdatesAvailable();
     void showIfUpdatesAvailableOrQuit();
+    void enableAutoDownload(bool enabled = true);
 
 private:
     Ui::UpdateDialog* ui;

@@ -140,6 +140,19 @@ void UpdateDialog::addInstallButton(QAbstractButton *button) {
     }
 }
 
+
+
+/*
+ * Getters
+ */
+/*!
+ * \brief Returns true if automatic downloads are enabled.
+ */
+bool UpdateDialog::autoDownloadEnabled() {
+    return settingsValue("autoDownload", false).toBool();
+}
+
+
 /*
  * Public Slots
  */
@@ -216,6 +229,14 @@ void UpdateDialog::showIfUpdatesAvailableOrQuit() {
     } else {
         QCoreApplication::quit();
     }
+}
+
+/*!
+ * \brief Enables automatic downloads.
+ * \param enabled
+ */
+void UpdateDialog::enableAutoDownload(bool enabled) {
+    setSettingsValue("autoDownload", enabled);
 }
 
 
