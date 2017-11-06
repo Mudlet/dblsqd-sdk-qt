@@ -23,7 +23,9 @@ public:
     void setIcon(QString fileName);
     void setIcon(QPixmap pixmap);
     void addInstallButton(QAbstractButton* button);
-    bool autoDownloadEnabled();
+
+    static bool autoDownloadEnabled(QSettings* settings = new QSettings);
+    static void enableAutoDownload(bool enabled, QSettings* settings = new QSettings);
 
 signals:
     void ready();
@@ -35,7 +37,6 @@ public slots:
     void skip();
     void showIfUpdatesAvailable();
     void showIfUpdatesAvailableOrQuit();
-    void enableAutoDownload(bool enabled = true);
 
 private:
     Ui::UpdateDialog* ui;
@@ -43,10 +44,6 @@ private:
     int type;
 
     QSettings* settings;
-    QString settingsGroup;
-    void setSettingsValue(QString key, QVariant value);
-    QVariant settingsValue(QString key, QVariant defaultValue = QVariant());
-    void removeSetting(QString key);
     void replaceAppVars(QString& string);
     QString generateChangelogDocument();
 
@@ -68,12 +65,16 @@ private:
     QList<QAbstractButton*> installButtons;
     QAbstractButton* acceptedInstallButton;
 
+    static void setSettingsValue(QString key, QVariant value, QSettings* settings = new QSettings());
+    static QVariant settingsValue(QString key, QVariant defaultValue = QVariant(), QSettings* settings = new QSettings());
+    static void removeSetting(QString key, QSettings* settings = new QSettings());
+
 private slots:
-    void toggleAutoDownloads(bool);
     void handleFeedReady();
     void handleDownloadFinished();
     void handleDownloadError(QString);
     void updateProgressBar(qint64, qint64);
+    void autoDownloadCheckboxToggled(bool enabled = true);
 };
 
 } //namespace dblsqd

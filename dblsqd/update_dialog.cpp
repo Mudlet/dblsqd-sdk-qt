@@ -66,7 +66,6 @@ UpdateDialog::UpdateDialog(Feed* feed, int type, QWidget* parent, QSettings* set
     feed(feed),
     type(type),
     settings(settings),
-    settingsGroup("DBLSQD"),
     accepted(false),
     isDownloadFinished(false),
     acceptedInstallButton(NULL)
@@ -138,18 +137,6 @@ void UpdateDialog::addInstallButton(QAbstractButton *button) {
     if (isVisible() && ui->buttonCancel->isVisible()) {
         setupUpdateUi();
     }
-}
-
-
-
-/*
- * Getters
- */
-/*!
- * \brief Returns true if automatic downloads are enabled.
- */
-bool UpdateDialog::autoDownloadEnabled() {
-    return settingsValue("autoDownload", false).toBool();
 }
 
 
@@ -231,29 +218,39 @@ void UpdateDialog::showIfUpdatesAvailableOrQuit() {
     }
 }
 
-/*!
- * \brief Enables automatic downloads.
- * \param enabled
+
+/*
+ * Static settings helpers
  */
-void UpdateDialog::enableAutoDownload(bool enabled) {
-    setSettingsValue("autoDownload", enabled);
+QVariant UpdateDialog::settingsValue(QString key, QVariant defaultValue, QSettings* settings) {
+    return settings->value("DBLSQD/" + key, defaultValue);
 }
 
+void UpdateDialog::setSettingsValue(QString key, QVariant value, QSettings* settings) {
+    settings->setValue("DBLSQD/" + key, value);
+}
+
+void UpdateDialog::removeSetting(QString key, QSettings* settings) {
+    settings->remove("DBLSQD/" + key);
+}
+
+/*!
+ * \brief Enables or disables automatic downloads.
+ */
+void UpdateDialog::enableAutoDownload(bool enabled, QSettings* settings) {
+    setSettingsValue("autoDownload", enabled, settings);
+}
+
+/*!
+ * \brief Returns true if automatic downloads are enabled.
+ */
+bool UpdateDialog::autoDownloadEnabled(QSettings* settings) {
+    return settingsValue("autoDownload", false, settings).toBool();
+}
 
 /*
  * Helpers
  */
-QVariant UpdateDialog::settingsValue(QString key, QVariant defaultValue) {
-    return settings->value(settingsGroup + "/" + key, defaultValue);
-}
-
-void UpdateDialog::setSettingsValue(QString key, QVariant value) {
-    settings->setValue(settingsGroup + "/" + key, value);
-}
-
-void UpdateDialog::removeSetting(QString key) {
-    settings->remove(settingsGroup + "/" + key);
-}
 
 void UpdateDialog::resetUi() {
     QList<QWidget*> hiddenWidgets;
@@ -314,7 +311,7 @@ void UpdateDialog::setupUpdateUi() {
     }
     ui->labelChangelog->setText(generateChangelogDocument());
 
-    ui->checkAutoDownload->setChecked(settingsValue("autoDownload", false).toBool());
+    ui->checkAutoDownload->setChecked(autoDownloadEnabled(settings));
 
     //Adapt buttons if release has been downloaded already
     if (isDownloadFinished) {
@@ -330,7 +327,7 @@ void UpdateDialog::setupUpdateUi() {
     connect(ui->buttonConfirm, SIGNAL(clicked()), this, SLOT(accept()));
     connect(ui->actionCancel, SIGNAL(triggered()), this, SLOT(reject()));
     connect(ui->actionSkip, SIGNAL(triggered()), this, SLOT(skip()));
-    connect(ui->checkAutoDownload, SIGNAL(toggled(bool)), this, SLOT(toggleAutoDownloads(bool)));
+    connect(ui->checkAutoDownload, SIGNAL(toggled(bool)), this, SLOT(autoDownloadCheckboxToggled(bool)));
 
     //Install buttons
     if (installButtons.isEmpty()) {
@@ -441,8 +438,9 @@ void UpdateDialog::startUpdate() {
  * Private Slots
  */
 
-void UpdateDialog::toggleAutoDownloads(bool enable) {
-    setSettingsValue("autoDownload", enable);
+
+void UpdateDialog::autoDownloadCheckboxToggled(bool enabled) {
+    enableAutoDownload(enabled, settings);
 }
 
 void UpdateDialog::handleFeedReady() {
@@ -460,9 +458,9 @@ void UpdateDialog::handleFeedReady() {
     }
 
     //Check if an update has been downloaded previously
-    updateFilePath = settingsValue("updateFilePath").toString();
+    updateFilePath = settingsValue("updateFilePath", "", settings).toString();
     if (!updateFilePath.isEmpty() && QFile::exists(updateFilePath)) {
-        QString updateFileVersion = settingsValue("updateFileVersion").toString();
+        QString updateFileVersion = settingsValue("updateFileVersion", "", settings).toString();
         if (updateFileVersion != latestRelease.getVersion() || updateFileVersion == QApplication::applicationVersion()) {
             QFile::remove(updateFilePath);
             removeSetting("updateFilePath");
@@ -481,8 +479,8 @@ void UpdateDialog::handleFeedReady() {
 
     //Automatic downloads
     QString latestVersion = latestRelease.getVersion();
-    bool skipRelease = (settingsValue("skipRelease").toString() == latestVersion);
-    bool autoDownload = settingsValue("autoDownload", false).toBool() && (!skipRelease);
+    bool skipRelease = (settingsValue("skipRelease", "", settings).toString() == latestVersion);
+    bool autoDownload = autoDownloadEnabled(settings) && (!skipRelease);
     if (autoDownload && !isDownloadFinished) {
         startDownload();
     }
@@ -499,8 +497,8 @@ void UpdateDialog::handleDownloadFinished() {
     file->setAutoRemove(false);
     file->close();
     file->deleteLater();
-    setSettingsValue("updateFilePath", updateFilePath);
-    setSettingsValue("updateFileVersion", latestRelease.getVersion());
+    setSettingsValue("updateFilePath", updateFilePath, settings);
+    setSettingsValue("updateFileVersion", latestRelease.getVersion(), settings);
 
     if (accepted) {
         if (acceptedInstallButton == NULL) {
