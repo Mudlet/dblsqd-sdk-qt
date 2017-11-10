@@ -234,6 +234,11 @@ void UpdateDialog::removeSetting(QString key, QSettings* settings) {
     settings->remove("DBLSQD/" + key);
 }
 
+void UpdateDialog::setDefaultSettingsValue(QString key, QVariant value, QSettings *settings) {
+    if (settings->contains("DBLSQD/" + key)) return;
+    setSettingsValue(key, value, settings);
+}
+
 /*!
  * \brief Enables or disables automatic downloads.
  */
@@ -243,8 +248,19 @@ void UpdateDialog::enableAutoDownload(bool enabled, QSettings* settings) {
 
 /*!
  * \brief Returns true if automatic downloads are enabled.
+ *
+ * If defaultValue is provided, it is stored if no other value has previously been set.
  */
-bool UpdateDialog::autoDownloadEnabled(QSettings* settings) {
+bool UpdateDialog::autoDownloadEnabled(QVariant defaultValue, QSettings* settings) {
+    if (defaultValue.isValid()) {
+        setDefaultSettingsValue("autoDownload", defaultValue, settings);
+    } else {
+        defaultValue = false;
+    }
+    return settingsValue("autoDownload", defaultValue, settings).toBool();
+}
+
+bool UpdateDialog::autoDownloadEnabled(QSettings *settings) {
     return settingsValue("autoDownload", false, settings).toBool();
 }
 

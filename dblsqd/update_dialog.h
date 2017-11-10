@@ -24,7 +24,8 @@ public:
     void setIcon(QPixmap pixmap);
     void addInstallButton(QAbstractButton* button);
 
-    static bool autoDownloadEnabled(QSettings* settings = new QSettings);
+    static bool autoDownloadEnabled(QVariant defaultValue, QSettings* settings = new QSettings);
+    static bool autoDownloadEnabled(QSettings *settings = new QSettings());
     static void enableAutoDownload(bool enabled, QSettings* settings = new QSettings);
 
 signals:
@@ -68,6 +69,7 @@ private:
     static void setSettingsValue(QString key, QVariant value, QSettings* settings = new QSettings());
     static QVariant settingsValue(QString key, QVariant defaultValue = QVariant(), QSettings* settings = new QSettings());
     static void removeSetting(QString key, QSettings* settings = new QSettings());
+    static void setDefaultSettingsValue(QString key, QVariant value, QSettings* settings = new QSettings());
 
 private slots:
     void handleFeedReady();
