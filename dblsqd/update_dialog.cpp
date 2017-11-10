@@ -260,6 +260,9 @@ bool UpdateDialog::autoDownloadEnabled(QVariant defaultValue, QSettings* setting
     return settingsValue("autoDownload", defaultValue, settings).toBool();
 }
 
+/*!
+ * \overload
+ */
 bool UpdateDialog::autoDownloadEnabled(QSettings *settings) {
     return settingsValue("autoDownload", false, settings).toBool();
 }
