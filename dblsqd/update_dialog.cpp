@@ -271,6 +271,18 @@ bool UpdateDialog::autoDownloadEnabled(QSettings *settings) {
  * Helpers
  */
 
+void UpdateDialog::adjustDialogSize() {
+    adjustSize();
+
+    /*HACK: Qt seems to incorrectly calculate window geometry on Windows.
+            This code avoids warning messages logged by the application
+            in that case.*/
+    #if defined(Q_OS_WIN) || defined(Q_WS_WIN)
+        QSize dialogSize = size();
+        resize(dialogSize.width(), dialogSize.height() + 3);
+     #endif
+}
+
 void UpdateDialog::resetUi() {
     QList<QWidget*> hiddenWidgets;
     for (int i = 0; i < installButtons.size(); i++) {
@@ -293,7 +305,7 @@ void UpdateDialog::resetUi() {
         hiddenWidgets.at(i)->disconnect();
     }
     ui->progressBar->reset();
-    adjustSize();
+    adjustDialogSize();
 }
 
 void UpdateDialog::setupLoadingUi() {
@@ -305,6 +317,7 @@ void UpdateDialog::setupLoadingUi() {
     ui->buttonCancelLoading->show();
     ui->buttonCancelLoading->setFocus();
     connect(ui->buttonCancelLoading, SIGNAL(clicked(bool)), this, SLOT(reject()));
+    adjustDialogSize();
 }
 
 void UpdateDialog::setupUpdateUi() {
@@ -361,6 +374,7 @@ void UpdateDialog::setupUpdateUi() {
         installButtons.last()->setFocus();
     }
 
+    adjustDialogSize();
 }
 
 void UpdateDialog::setupChangelogUi() {
@@ -384,6 +398,7 @@ void UpdateDialog::setupChangelogUi() {
     ui->labelChangelog->setText(generateChangelogDocument());
     connect(ui->buttonConfirm, SIGNAL(clicked(bool)), this, SLOT(accept()));
     ui->buttonConfirm->setFocus();
+    adjustDialogSize();
 }
 
 void UpdateDialog::setupNoUpdatesUi() {
@@ -401,6 +416,7 @@ void UpdateDialog::setupNoUpdatesUi() {
     ui->labelHeadlineNoUpdates->setText(text);
 
     connect(ui->buttonConfirm, SIGNAL(clicked(bool)), this, SLOT(accept()));
+    adjustDialogSize();
 }
 
 void UpdateDialog::disableButtons(bool disable) {

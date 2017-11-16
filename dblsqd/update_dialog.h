@@ -54,6 +54,7 @@ private:
     void setupUpdateUi();
     void setupChangelogUi();
     void setupNoUpdatesUi();
+    void adjustDialogSize();
 
     void startDownload();
     virtual void startUpdate();
