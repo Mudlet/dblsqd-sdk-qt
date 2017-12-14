@@ -71,6 +71,13 @@ UpdateDialog::UpdateDialog(Feed* feed, int type, QWidget* parent, QSettings* set
     acceptedInstallButton(NULL)
 {
     ui->setupUi(this);
+
+    QPalette palette = this->palette();
+    QString textColor = palette.color(QPalette::Text).name();
+    QString backgroundColor = palette.color(QPalette::Base).name();
+    QString labelChangelogStyle = QString("color: %1; background: %2").arg(textColor, backgroundColor);
+    ui->labelChangelog->setStyleSheet(labelChangelogStyle);
+
     ui->buttonCancel->addAction(ui->actionCancel);
     ui->buttonCancel->addAction(ui->actionSkip);
     ui->buttonCancel->setDefaultAction(ui->actionCancel);
