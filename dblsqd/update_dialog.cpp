@@ -82,6 +82,9 @@ UpdateDialog::UpdateDialog(Feed* feed, int type, QWidget* parent, QSettings* set
     ui->buttonCancel->addAction(ui->actionSkip);
     ui->buttonCancel->setDefaultAction(ui->actionCancel);
 
+    _openExternalLinks = true;
+    connect(ui->labelChangelog, SIGNAL(linkActivated(QString)), this, SLOT(onLinkActivated(QString)));
+
     switch(type) {
         case OnUpdateAvailable: {
             connect(this, SIGNAL(ready()), this, SLOT(showIfUpdatesAvailable()));
@@ -145,6 +148,28 @@ void UpdateDialog::addInstallButton(QAbstractButton *button) {
         setupUpdateUi();
     }
 }
+
+/*!
+ * \propget UpdateExternalLinks
+ *
+ * Determines if links in the changelog should be opened automatically by QDesktopServices::openUrl()
+ * when a user clicks on them.
+ * If set to false, the linkActivated() signal is emitted instead.
+ *
+ * The default value is true.
+
+ */
+bool UpdateDialog::openExternalLinks() {
+    return _openExternalLinks;
+}
+
+/*!
+ * \propset UpdateDialog::openExternalLinks
+ */
+void UpdateDialog::setOpenExternalLinks(bool open) {
+    _openExternalLinks = open;
+}
+
 
 
 /*
@@ -567,6 +592,14 @@ void UpdateDialog::updateProgressBar(qint64 bytesReceived, qint64 bytesTotal) {
     ui->progressBar->show();
     ui->progressBar->setMaximum(bytesTotal / 1024);
     ui->progressBar->setValue(bytesReceived / 1024);
+}
+
+void UpdateDialog::onLinkActivated(QString link) {
+    if (_openExternalLinks) {
+        QDesktopServices::openUrl(link);
+    } else {
+        emit linkActivated(link);
+    }
 }
 
 

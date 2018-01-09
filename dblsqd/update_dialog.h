@@ -28,9 +28,13 @@ public:
     static bool autoDownloadEnabled(QSettings *settings = new QSettings());
     static void enableAutoDownload(bool enabled, QSettings* settings = new QSettings);
 
+    void setOpenExternalLinks(bool open);
+    bool openExternalLinks();
+
 signals:
     void ready();
     void installButtonClicked(QAbstractButton* button, QString filePath);
+    void linkActivated(QString link);
 
 public slots:
     void onButtonInstall();
@@ -66,6 +70,7 @@ private:
     Release latestRelease;
     QList<QAbstractButton*> installButtons;
     QAbstractButton* acceptedInstallButton;
+    bool _openExternalLinks;
 
     static void setSettingsValue(QString key, QVariant value, QSettings* settings = new QSettings());
     static QVariant settingsValue(QString key, QVariant defaultValue = QVariant(), QSettings* settings = new QSettings());
@@ -78,6 +83,7 @@ private slots:
     void handleDownloadError(QString);
     void updateProgressBar(qint64, qint64);
     void autoDownloadCheckboxToggled(bool enabled = true);
+    void onLinkActivated(QString link);
 };
 
 } //namespace dblsqd
