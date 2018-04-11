@@ -134,6 +134,37 @@ void UpdateDialog::setIcon(QString fileName) {
 }
 
 /*!
+ * \brief Sets the minimum version to be displayed in the changelog.
+ * Defaults to QApplication::applicationVersion() if not set.
+ * \param version
+ */
+void UpdateDialog::setMinVersion(QString version) {
+    _minVersion = version;
+    setupChangelogUi();
+}
+
+/*!
+ * \brief Sets the maximum version to be displayed in the changelog
+ * \param version
+ */
+void UpdateDialog::setMaxVersion(QString version) {
+    _maxVersion = version;
+    setupChangelogUi();
+}
+
+/*!
+ * \brief Convenience method for setting minimum and maximum version to be displayed in the changelog.
+ * maximumVersion is set to QApplication::applicationVersion()
+ * \param previousVersion
+ */
+void UpdateDialog::setPreviousVersion(QString previousVersion) {
+    _previousVersion = previousVersion;
+    _minVersion = previousVersion;
+    _maxVersion = QApplication::applicationVersion();
+    setupChangelogUi();
+}
+
+/*!
  * \brief Adds a custom button for handling update installation.
  * \param button
  *
@@ -475,13 +506,25 @@ void UpdateDialog::replaceAppVars(QString &string) {
 
 QString UpdateDialog::generateChangelogDocument() {
     QString changelog;
-    for (int i = 0; i < updates.size(); i++) {
+    QList<Release> changelogReleases;
+    if (_minVersion.isEmpty() && _maxVersion.isEmpty()) {
+        changelogReleases = updates;
+    } else {
+        Release minRelease(_minVersion.isEmpty() ? QApplication::applicationVersion() : _minVersion);
+        Release maxRelease(_maxVersion);
+        for (int i = 0; i < releases.size(); i++) {
+            if (minRelease < releases.at(i) && (_maxVersion.isEmpty() || releases.at(i) <= maxRelease)) {
+                changelogReleases << releases.at(i);
+            }
+        }
+    }
+    for (int i = 0; i < changelogReleases.size(); i++) {
         QString h2Style = "font-size: medium;";
         if (i > 0) {
             h2Style.append("margin-top: 1em;");
         }
-        changelog.append("<h2 style=\"" + h2Style + "\">" + updates.at(i).getVersion() + "</h2>");
-        changelog.append("<p>" + updates.at(i).getChangelog() + "</p>");
+        changelog.append("<h2 style=\"" + h2Style + "\">" + changelogReleases.at(i).getVersion() + "</h2>");
+        changelog.append("<p>" + changelogReleases.at(i).getChangelog() + "</p>");
     }
     return changelog;
 }
@@ -514,6 +557,7 @@ void UpdateDialog::handleFeedReady() {
     //Retrieve update information
     Release currentRelease(QApplication::applicationVersion());
     updates = feed->getUpdates(currentRelease);
+    releases = feed->getReleases();
     if (!updates.isEmpty()) {
         latestRelease = updates.first();
     }

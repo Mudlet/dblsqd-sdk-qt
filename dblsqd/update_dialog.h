@@ -24,6 +24,10 @@ public:
     void setIcon(QPixmap pixmap);
     void addInstallButton(QAbstractButton* button);
 
+    void setMinVersion(QString version);
+    void setMaxVersion(QString version);
+    void setPreviousVersion(QString version);
+
     static bool autoDownloadEnabled(QVariant defaultValue, QSettings* settings = new QSettings);
     static bool autoDownloadEnabled(QSettings *settings = new QSettings());
     static void enableAutoDownload(bool enabled, QSettings* settings = new QSettings);
@@ -66,11 +70,15 @@ private:
     bool accepted;
     bool isDownloadFinished;
     QString updateFilePath;
+    QList<Release> releases;
     QList<Release> updates;
     Release latestRelease;
     QList<QAbstractButton*> installButtons;
     QAbstractButton* acceptedInstallButton;
     bool _openExternalLinks;
+    QString _minVersion;
+    QString _maxVersion;
+    QString _previousVersion;
 
     static void setSettingsValue(QString key, QVariant value, QSettings* settings = new QSettings());
     static QVariant settingsValue(QString key, QVariant defaultValue = QVariant(), QSettings* settings = new QSettings());
