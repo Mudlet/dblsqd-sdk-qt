@@ -13,7 +13,9 @@ public:
     Release(QJsonObject releaseInfo);
     Release(QString version = QString(), QDateTime date = QDateTime());
 
-    bool operator<(const Release &other) const;
+    friend bool operator<(const Release &one, const Release &other);
+    friend bool operator==(const Release &one, const Release &other);
+    friend bool operator<=(const Release &one, const Release &other);
 
     QString getVersion() const;
     QString getChangelog() const;
