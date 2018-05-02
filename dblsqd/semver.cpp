@@ -21,6 +21,13 @@ SemVer::SemVer(QString version) : original(version), valid(false)
         this->prerelease = rx.cap(4);
         this->build = rx.cap(5);
         this->valid = true;
+    } else {
+        this->major = 0;
+        this->minor = 0;
+        this->patch = 0;
+        this->prerelease = "";
+        this->build = "";
+        this->valid = false;
     }
 }
 

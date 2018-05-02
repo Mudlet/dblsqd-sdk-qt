@@ -26,6 +26,7 @@ Feed::Feed(QString baseUrl, QString channel, QString os, QString arch, QString t
     : feedReply(NULL),
       downloadReply(NULL),
       downloadFile(NULL),
+      redirects(0),
       _ready(false)
 {
     if (!baseUrl.isEmpty()) {
@@ -232,7 +233,7 @@ void Feed::handleFeedFinished() {
         return;
     }
 
-    releases.empty();
+    releases.clear();
     QByteArray json = feedReply->readAll();
     QJsonDocument doc = QJsonDocument::fromJson(json);
     QJsonArray releasesInfo = doc.object().value("releases").toArray();

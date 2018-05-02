@@ -32,7 +32,14 @@ Release::Release(QJsonObject releaseInfo)
  * it with Releases retrieved from a Feed.
  */
 Release::Release(QString version, QDateTime date)
-    : version(version), date(date) {
+    : version(version),
+      date(date),
+      changelog(""),
+      downloadUrl(""),
+      downloadSize(0),
+      downloadSHA1(""),
+      downloadSHA256(""),
+      downloadDSA("") {
 }
 
 /*!
