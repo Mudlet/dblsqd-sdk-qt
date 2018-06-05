@@ -247,7 +247,7 @@ void UpdateDialog::skip() {
         QFile::remove(updateFilePath);
 
     }
-    setSettingsValue("skipRelease", latestRelease.getVersion());
+    setSettingsValue("skipRelease", latestRelease.getVersion(), settings);
     done(QDialog::Rejected);
 }
 
@@ -257,7 +257,7 @@ void UpdateDialog::skip() {
  */
 void UpdateDialog::showIfUpdatesAvailable() {
     QString latestVersion = latestRelease.getVersion();
-    bool skipRelease = (settingsValue("skipRelease").toString() == latestVersion);
+    bool skipRelease = (settingsValue("skipRelease", "", settings).toString() == latestVersion);
     if (!latestVersion.isEmpty() && !skipRelease) {
         show();
     }
@@ -273,7 +273,7 @@ void UpdateDialog::showIfUpdatesAvailableOrQuit() {
         disconnect(app, SIGNAL(lastWindowClosed()), this, SLOT(showIfUpdatesAvailableOrQuit()));
     }
     QString latestVersion = latestRelease.getVersion();
-    bool skipRelease = (settingsValue("skipRelease").toString() == latestVersion);
+    bool skipRelease = (settingsValue("skipRelease", "", settings).toString() == latestVersion);
     if (!latestVersion.isEmpty() && !skipRelease) {
         show();
     } else {
