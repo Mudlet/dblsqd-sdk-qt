@@ -14,10 +14,10 @@ namespace  dblsqd {
 Release::Release(QJsonObject releaseInfo)
 {
     this->version = releaseInfo.value("version").toString();
-    this->date = QDateTime::fromString(releaseInfo.value("date").toString(), Qt::ISODate);
     this->changelog = releaseInfo.value("changelog").toString();
 
     QJsonObject downloadInfo = releaseInfo.value("download").toObject();
+    this->date = QDateTime::fromString(downloadInfo.value("date").toString(), Qt::ISODate);
     this->downloadUrl = QUrl(downloadInfo.value("url").toString());
     this->downloadSize = downloadInfo.value("size").toDouble();
     this->downloadSHA1 = downloadInfo.value("sha1").toString();
