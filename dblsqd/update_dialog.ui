@@ -16,6 +16,9 @@
     <height>0</height>
    </size>
   </property>
+  <property name="windowTitle">
+   <string>%APPNAME% update</string>
+  </property>
   <property name="modal">
    <bool>true</bool>
   </property>

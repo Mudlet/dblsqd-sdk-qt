@@ -408,6 +408,10 @@ void UpdateDialog::setupUpdateUi() {
 
     ui->checkAutoDownload->setChecked(autoDownloadEnabled(settings));
 
+    auto title = windowTitle();
+    replaceAppVars(title);
+    setWindowTitle(title);
+
     //Adapt buttons if release has been downloaded already
     if (isDownloadFinished) {
         ui->progressBar->show();
