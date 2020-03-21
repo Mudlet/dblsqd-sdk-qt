@@ -55,7 +55,7 @@ bool operator <(const Release &one, const Release &other) {
     if (v1.isValid() && v2.isValid()) {
         return (v1 < v2);
     } else {
-        return (other.date < other.date);
+        return (one.date < other.date);
     }
 }
 
