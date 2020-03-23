@@ -462,6 +462,11 @@ void UpdateDialog::setupChangelogUi() {
         replaceAppVars(text);
         labels.at(i)->setText(text);
     }
+
+    auto title = windowTitle();
+    replaceAppVars(title);
+    setWindowTitle(title);
+
     ui->labelChangelog->setText(generateChangelogDocument());
     connect(ui->buttonConfirm, SIGNAL(clicked(bool)), this, SLOT(accept()));
     ui->buttonConfirm->setFocus();
@@ -481,6 +486,10 @@ void UpdateDialog::setupNoUpdatesUi() {
     QString text = ui->labelHeadlineNoUpdates->text();
     replaceAppVars(text);
     ui->labelHeadlineNoUpdates->setText(text);
+
+    auto title = windowTitle();
+    replaceAppVars(title);
+    setWindowTitle(title);
 
     connect(ui->buttonConfirm, SIGNAL(clicked(bool)), this, SLOT(accept()));
     adjustDialogSize();
