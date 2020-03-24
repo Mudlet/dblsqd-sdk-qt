@@ -54,9 +54,11 @@ bool operator <(const Release &one, const Release &other) {
     SemVer v2(other.version);
     if (v1.isValid() && v2.isValid()) {
         return (v1 < v2);
-    } else {
+    } else if (one.getVersion() != other.getVersion()) {
         return (one.date < other.date);
     }
+
+    return false;
 }
 
 bool operator ==(const Release &one, const Release &other) {
