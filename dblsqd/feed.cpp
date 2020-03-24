@@ -113,14 +113,10 @@ QList<Release> Feed::getReleases() {
  */
 QList<Release> Feed::getUpdates(Release currentRelease) {
     QList<Release> updates;
-    qDebug() << "comparing "<< currentRelease.getVersion() << currentRelease.getDate() << "against...";
     for (const auto release: releases) {
         qDebug() << release.getVersion() << release.getDate();
         if (currentRelease.getVersion().toLower() != release.getVersion().toLower() && currentRelease < release) {
-            qDebug() << "it's newer, added as an update";
             updates << release;
-        } else {
-            qDebug() << "not newer, not an update";
         }
     }
     return updates;
