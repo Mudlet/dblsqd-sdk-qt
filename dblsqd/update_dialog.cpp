@@ -568,8 +568,8 @@ void UpdateDialog::autoDownloadCheckboxToggled(bool enabled) {
 
 void UpdateDialog::handleFeedReady() {
     //Retrieve update information
-    Release currentRelease(QApplication::applicationVersion());
-    updates = feed->getUpdates(currentRelease);
+    qDebug() << "calling getUpdates from UpdateDialog::handleFeedReady";
+    updates = feed->getUpdates(dblsqd::Release::getCurrentRelease());
     releases = feed->getReleases();
     if (!updates.isEmpty()) {
         latestRelease = updates.first();
