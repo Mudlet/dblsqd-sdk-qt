@@ -114,11 +114,11 @@ QList<Release> Feed::getReleases() {
 QList<Release> Feed::getUpdates(Release currentRelease) {
     QList<Release> updates;
     qDebug() << "comparing "<< currentRelease.getVersion() << currentRelease.getDate() << "against...";
-    for (int i = 0; i < releases.size(); i++) {
-        qDebug() << releases.at(i).getDate();
-        if (currentRelease.getVersion() != releases.at(i).getVersion() && currentRelease < releases.at(i)) {
+    for (const auto release: releases) {
+        qDebug() << release.getVersion() << release.getDate();
+        if (currentRelease.getVersion() != release.getVersion() && currentRelease < release) {
             qDebug() << "it's newer, added as an update";
-            updates << releases.at(i);
+            updates << release;
         } else {
             qDebug() << "not newer, not an update";
         }
