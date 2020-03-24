@@ -25,6 +25,7 @@ public:
     QString getDownloadSHA256() const;
     QString getDownloadDSA() const;
     qint64 getDownloadSize() const;
+    static dblsqd::Release getCurrentRelease();
 
 private:
     QString version;
