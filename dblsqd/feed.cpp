@@ -113,7 +113,7 @@ QList<Release> Feed::getReleases() {
  */
 QList<Release> Feed::getUpdates(Release currentRelease) {
     QList<Release> updates;
-    for (const auto release: releases) {
+    for (const auto& release: releases) {
         if (currentRelease.getVersion().toLower() != release.getVersion().toLower() && currentRelease < release) {
             updates << release;
         }
