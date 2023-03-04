@@ -2,7 +2,7 @@ TEMPLATE = lib
 
 INCLUDEPATH += $$PWD
 
-QT += network widgets
+QT += core network widgets
 
 CONFIG += staticlib
 
