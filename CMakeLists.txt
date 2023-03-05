@@ -36,7 +36,8 @@ ELSE()
   SET(QT_LIBS Qt6::Core Qt6::Network Qt6::Widgets)
 ENDIF()
 
-# Qt 5.7 or greater require C++11 standard. Set this requirement conditionally to lower requirements where possible
+# Qt 5.7 or greater require C++11 standard. Qt6 or greater require C++17 standard.
+# Set these requirements conditionally to lower requirements where possible
 IF(NOT BUILD_WITH_QT5)
   set(CMAKE_CXX_STANDARD 17)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
