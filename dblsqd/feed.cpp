@@ -256,7 +256,7 @@ void Feed::handleDownloadProgress(qint64 bytesReceived, qint64 bytesTotal) {
 void Feed::handleDownloadReadyRead() {
     if (downloadFile == NULL) {
         QString fileName = downloadReply->url().fileName();
-        int extensionPos = fileName.indexOf(QRegExp("(?:\\.tar)?\\.[a-zA-Z0-9]+$"));
+        int extensionPos = fileName.indexOf(QRegularExpression("(?:\\.tar)?\\.[a-zA-Z0-9]+$"));
         if (extensionPos > -1) {
             fileName.insert(extensionPos, "-XXXXXX");
         }

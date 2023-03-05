@@ -1,5 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
 
+OPTION(BUILD_WITH_QT5 "Whether to build with Qt5 or Qt6." ON)
+
 IF(POLICY CMP0020)
   CMAKE_POLICY(SET CMP0020 NEW)
 ENDIF()
@@ -20,19 +22,28 @@ SET(HEADERS
   dblsqd/feed.h
 )
 
-FIND_PACKAGE(Qt5 REQUIRED
-	COMPONENTS Core
-		   Network
-		   Widgets)
-
-# Qt 5.7 or greater require C++11 standard. Set this requirement conditionally to lower requirements where possible
-IF (Qt5Core_VERSION VERSION_EQUAL 5.7 OR Qt5Core_VERSION VERSION_GREATER 5.7)
-  set(CMAKE_CXX_STANDARD 11)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+IF(BUILD_WITH_QT5)
+  FIND_PACKAGE(Qt5 REQUIRED
+    COMPONENTS Core
+    Network
+	Widgets)
+	SET(QT_LIBS Qt5::Core Qt5::Network Qt5::Widgets)
+ELSE()
+  FIND_PACKAGE(Qt6 REQUIRED
+    COMPONENTS Core
+	Network
+	Widgets)
+  SET(QT_LIBS Qt6::Core Qt6::Network Qt6::Widgets)
 ENDIF()
 
-IF(Qt5_POSITION_INDEPENDENT_CODE)
-  SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
+# Qt 5.7 or greater require C++11 standard. Qt6 or greater require C++17 standard.
+# Set these requirements conditionally to lower requirements where possible
+IF(NOT BUILD_WITH_QT5)
+  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ELSEIF(Qt5Core_VERSION VERSION_EQUAL 5.7 OR Qt5Core_VERSION VERSION_GREATER 5.7)
+  set(CMAKE_CXX_STANDARD 11)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
 ENDIF()
 
 # automatically use moc and uic when needed
@@ -44,9 +55,7 @@ ADD_LIBRARY(dblsqd STATIC
 )
 
 TARGET_LINK_LIBRARIES(dblsqd
-	Qt5::Core
-	Qt5::Network
-	Qt5::Widgets)
+	${QT_LIBS})
 
 # publish the include directories to allow dependent projects to find the needed headers
 TARGET_INCLUDE_DIRECTORIES(dblsqd PUBLIC
