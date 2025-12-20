@@ -296,6 +296,7 @@ void Feed::handleDownloadFinished() {
         return;
     }
 
+    downloadFile->close();
     emit downloadFinished();
 }
 
