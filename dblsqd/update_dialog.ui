@@ -219,7 +219,7 @@ Would you like to update now?</string>
     </widget>
    </item>
    <item>
-    <widget class="QScrollArea" name="scrollAreaChangelog">
+    <widget class="QTextBrowser" name="labelChangelog">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
@@ -232,64 +232,15 @@ Would you like to update now?</string>
        <height>150</height>
       </size>
      </property>
-     <property name="widgetResizable">
+     <property name="focusPolicy">
+      <enum>Qt::StrongFocus</enum>
+     </property>
+     <property name="readOnly">
       <bool>true</bool>
      </property>
-     <widget class="QWidget" name="scrollAreaWidgetContents">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>580</width>
-        <height>235</height>
-       </rect>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background:white;</string>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="labelChangelog">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="textFormat">
-          <enum>Qt::RichText</enum>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-         <property name="margin">
-          <number>5</number>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+     <property name="openExternalLinks">
+      <bool>false</bool>
+     </property>
     </widget>
    </item>
    <item>
@@ -413,6 +364,7 @@ Would you like to update now?</string>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
+  <tabstop>labelChangelog</tabstop>
   <tabstop>checkAutoDownload</tabstop>
  </tabstops>
  <resources/>
